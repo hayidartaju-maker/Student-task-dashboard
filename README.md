@@ -1,7 +1,7 @@
 # Student Task Dashboard
 
 ## Objective
-Complete the application using HTML, CSS, JavaScript, Git, GitHub and teamwork workflow.
+Complete the application using HTML, CSS, JavaScript, Git, GitHub, teamwork workflow, and responsive design.
 
 ## Requirements
 - Add Task
@@ -23,3 +23,10 @@ Complete the application using HTML, CSS, JavaScript, Git, GitHub and teamwork w
 ## Submission
 - GitHub Repository Link
 - PDF Report
+
+## Technologies Used
+- HTML5
+- CSS3 (Responsive Design)
+- JavaScript (ES6+)
+- localStorage for data persistence
+- Git & GitHub for version control
