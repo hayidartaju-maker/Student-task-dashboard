@@ -1,56 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Task Dashboard</title>
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Task List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700&family=Baloo+2:wght@500;700&family=Merriweather:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-theme="dark">
 
-<header>
-    <h1>Student Task Dashboard</h1>
-</header>
+<nav class="navbar">
+  <div class="brand">
+    <i class="fa-solid fa-graduation-cap"></i>
+    <div>STUDENT<span style="color:var(--accent)">TASKS</span><small>plan · track · finish</small></div>
+  </div>
+  <button class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
+  <div class="nav-links" id="navLinks">
+    <button class="nav-btn active" data-page="home"><i class="fa-solid fa-house"></i>Home</button>
+    <button class="nav-btn" data-page="tasks"><i class="fa-solid fa-list-check"></i>Tasks</button>
+    <button class="nav-btn" data-page="add"><i class="fa-solid fa-plus"></i>Add Task</button>
+    <button class="nav-btn" data-page="settings"><i class="fa-solid fa-gear"></i>Settings</button>
+  </div>
+  <div class="nav-tools">
+    <div class="social-icons">
+      <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="#"><i class="fa-brands fa-twitter"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+    <div class="color-swatch-wrap" title="Accent">
+      <span class="color-swatch" id="swatch"></span>
+      <input type="color" id="accentPicker" value="#00f0ff">
+    </div>
+    <button class="theme-toggle" id="themeToggle"><span class="knob"><i class="fa-solid fa-moon"></i></span></button>
+  </div>
+</nav>
 
-<main class="container">
-
-    <div class="task-box">
-        <input
-            type="text"
-            id="taskInput"
-            placeholder="Enter a new task">
-
-        <button id="addBtn">Add Task</button>
+<div class="container">
+  <!-- HOME -->
+  <section class="page active" id="page-home">
+    <div class="page-header">
+      <div class="eyebrow">Overview</div>
+      <div class="page-title" id="homeGreeting">Welcome back 👋</div>
+      <div class="page-sub">Your study dashboard</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><i class="fa-solid fa-clipboard-list"></i><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total</div></div>
+      <div class="stat-card"><i class="fa-solid fa-circle-check"></i><div class="stat-num" id="statDone">0</div><div class="stat-label">Done</div></div>
+      <div class="stat-card"><i class="fa-solid fa-hourglass-half"></i><div class="stat-num" id="statPending">0</div><div class="stat-label">Pending</div></div>
     </div>
 
-    <ul id="taskList">
-
-    </ul>
-
-    <div class="statistics">
-
-        <p>Total Tasks:
-            <span id="total">0</span>
-        </p>
-
-        <p>Completed:
-            <span id="completed">0</span>
-        </p>
-
-        <p>Remaining:
-            <span id="remaining">0</span>
-        </p>
-
+    <div class="filter-bar">
+      <div class="search-box">
+        <i class="fa-solid fa-search"></i>
+        <input id="homeSearchInput" placeholder="Search tasks..." />
+      </div>
+      <button class="quick-add-btn" id="homeAddBtn">
+        <i class="fa-solid fa-plus"></i> Add New Task
+      </button>
     </div>
 
-</main>
+    <div class="mini-list-title">📅 Quick View Tasks</div>
+    <div class="task-list" id="weekList"></div>
+  </section>
 
-<footer>
-    <p>Frontend Challenge</p>
-</footer>
+  <!-- TASKS -->
+  <section class="page" id="page-tasks">
+    <div class="page-header">
+      <div class="eyebrow">All Tasks</div>
+      <div class="page-title">Your Task List</div>
+      <div class="page-sub">Filter, search, sort</div>
+    </div>
+    <div class="filter-bar" id="filterBar">
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="pending">Pending</button>
+      <button class="chip" data-filter="progress">Progress</button>
+      <button class="chip" data-filter="completed">Done</button>
+      <div class="search-box"><i class="fa-solid fa-search"></i><input id="searchInput" placeholder="Search..." /></div>
+      <select id="sortSelect" style="background:var(--panel);border:1px solid var(--panel-border);border-radius:20px;padding:6px 12px;color:var(--text);font-size:.75rem;">
+        <option value="default">Sort: default</option>
+        <option value="due">Due date</option>
+        <option value="priority">Priority</option>
+      </select>
+    </div>
+    <div class="task-list" id="taskList"></div>
+  </section>
+
+  <!-- ADD / EDIT -->
+  <section class="page" id="page-add">
+    <div class="page-header">
+      <div class="eyebrow" id="formEyebrow">New Entry</div>
+      <div class="page-title" id="formTitle">Add a Task</div>
+      <div class="page-sub">Fill in all details</div>
+    </div>
+    <form class="form-card" id="taskForm" onsubmit="return false;">
+      <input type="hidden" id="taskId">
+      <div class="field"><label>Task Title</label><input type="text" id="fTitle" placeholder="e.g. Finish math homework" required></div>
+      <div class="field"><label>Description</label><textarea id="fDesc" placeholder="Details"></textarea></div>
+      <div class="field"><label>Category</label><input type="text" id="fCategory" placeholder="Homework, Project..." required></div>
+      <div class="inline-group">
+        <div class="field"><label>Due date</label><input type="date" id="fDue"></div>
+        <div class="field"><label>Priority</label>
+          <div class="priority-select-group">
+            <label><input type="radio" name="fPriority" value="low" checked><span class="priority-pick">Low</span></label>
+            <label><input type="radio" name="fPriority" value="medium"><span class="priority-pick">Medium</span></label>
+            <label><input type="radio" name="fPriority" value="high"><span class="priority-pick">High</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="field"><label>Status</label>
+        <div class="status-select-group">
+          <label><input type="radio" name="fStatus" value="pending" checked><span class="status-pick">Pending</span></label>
+          <label><input type="radio" name="fStatus" value="progress"><span class="status-pick">In Progress</span></label>
+          <label><input type="radio" name="fStatus" value="completed"><span class="status-pick">Completed</span></label>
+        </div>
+      </div>
+      <div class="field"><label>Recurring</label>
+        <select id="fRecur"><option value="none">None</option><option value="daily">Daily</option><option value="weekly">Weekly</option></select>
+      </div>
+      <div class="field"><label>Subtasks (comma separated)</label><input type="text" id="fSubtasks" placeholder="research, outline, draft"></div>
+      <button type="button" class="btn-primary" id="submitBtn"><i class="fa-solid fa-plus"></i> Add Task</button>
+      <button type="button" class="btn-ghost" id="cancelEdit" style="display:none;">Cancel edit</button>
+    </form>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="page" id="page-settings">
+    <div class="page-header"><div class="eyebrow">Preferences</div><div class="page-title">Settings</div><div class="page-sub">Profile & data</div></div>
+    <div class="settings-grid">
+      <div class="settings-card">
+        <h3><i class="fa-solid fa-user"></i> Profile</h3>
+        <div class="settings-row"><div class="field"><label>Name</label><input type="text" id="pName" placeholder="Your name"></div></div>
+        <div class="field"><label>Email</label><input type="email" id="pEmail" placeholder="you@example.com"></div>
+        <button class="btn-primary" id="saveProfile"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+        <div id="identityCard" style="display:none; margin-top:14px; padding:12px 14px; border-radius:12px; background:var(--panel-strong); border:1px solid var(--panel-border); align-items:center; gap:12px;">
+          <div style="width:38px; height:38px; border-radius:50%; background:var(--accent); color:var(--bg); display:flex; align-items:center; justify-content:center; font-weight:700; font-family:'Orbitron',sans-serif; flex-shrink:0;" id="identityAvatar">?</div>
+          <div style="min-width:0;"><div style="font-weight:600; font-size:.9rem; color:var(--heading);" id="identityName">—</div><div style="font-size:.78rem; color:var(--text-dim);" id="identityEmail">—</div></div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <h3><i class="fa-solid fa-palette"></i> Appearance</h3>
+        <div class="settings-row">
+          <div class="field"><label>Accent</label><input type="color" id="settingsColorPicker" value="#00f0ff" style="height:44px; padding:4px;"></div>
+          <div class="field"><label>Theme</label><select id="themeSelect"><option value="dark">Dark</option><option value="light">Light</option></select></div>
+        </div>
+        <div class="field"><label>Background</label><div class="status-select-group">
+          <label><input type="radio" name="bgStyle" value="aurora" checked><span class="status-pick">Aurora</span></label>
+          <label><input type="radio" name="bgStyle" value="minimal"><span class="status-pick">Flat</span></label>
+          <label><input type="radio" name="bgStyle" value="grid"><span class="status-pick">Grid</span></label>
+        </div></div>
+      </div>
+      <div class="settings-card">
+        <h3><i class="fa-solid fa-text-height"></i> Page Style</h3>
+        <div class="field"><label>Font size</label><div class="status-select-group">
+          <label><input type="radio" name="fontSize" value="14"><span class="status-pick">S</span></label>
+          <label><input type="radio" name="fontSize" value="16" checked><span class="status-pick">M</span></label>
+          <label><input type="radio" name="fontSize" value="19"><span class="status-pick">L</span></label>
+        </div></div>
+        <div class="field"><label>Font style</label><div class="status-select-group">
+          <label><input type="radio" name="fontStyle" value="poppins" checked><span class="status-pick" style="font-family:'Poppins';">Modern</span></label>
+          <label><input type="radio" name="fontStyle" value="baloo"><span class="status-pick" style="font-family:'Baloo 2';">Rounded</span></label>
+          <label><input type="radio" name="fontStyle" value="merri"><span class="status-pick" style="font-family:'Merriweather';">Classic</span></label>
+          <label><input type="radio" name="fontStyle" value="mono"><span class="status-pick" style="font-family:'Space Mono';">Mono</span></label>
+        </div></div>
+        <div class="field"><label>Card style</label><div class="status-select-group">
+          <label><input type="radio" name="cardStyle" value="capsule" checked><span class="status-pick">Classic</span></label>
+          <label><input type="radio" name="cardStyle" value="wave"><span class="status-pick">Wave</span></label>
+          <label><input type="radio" name="cardStyle" value="arrow"><span class="status-pick">Arrow</span></label>
+          <label><input type="radio" name="cardStyle" value="ticket"><span class="status-pick">Ticket</span></label>
+        </div></div>
+      </div>
+      <div class="settings-card">
+        <h3><i class="fa-solid fa-database"></i> Data</h3>
+        <div class="btn-row"><button id="exportBtn"><i class="fa-solid fa-file-export"></i> Export</button><button id="importBtn"><i class="fa-solid fa-file-import"></i> Import</button><input type="file" id="importFile" accept="application/json" style="display:none;"></div>
+        <div class="btn-row" style="margin-top:10px;"><button class="danger-btn" id="deleteAllBtn"><i class="fa-solid fa-trash"></i> Delete All</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toastMsg">Saved</span></div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
